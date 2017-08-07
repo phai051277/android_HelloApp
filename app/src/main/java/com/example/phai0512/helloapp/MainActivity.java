@@ -3,12 +3,10 @@ package com.example.phai0512.helloapp;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainFragment.MyListener {
 
     private TextView textView;
     private boolean resultFlg;
@@ -24,4 +22,11 @@ public class MainActivity extends AppCompatActivity {
         transaction.add(R.id.container, fragment);
         transaction.commit();
     }
+
+    // interface内のメソッドを実装します。
+    @Override
+    public void onClickButton(String calcView) {
+        Toast.makeText(this, String.format("MainFragmentから%sがクリックされました!", calcView), Toast.LENGTH_SHORT).show();
+    }
+
 }
