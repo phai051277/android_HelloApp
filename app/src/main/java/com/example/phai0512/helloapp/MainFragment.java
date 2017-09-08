@@ -13,19 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by phai0512 on 2017/07/19.
  */
 
 public class MainFragment extends Fragment {
-
-    // コールバック用インターフェース定義
-    public interface MyListener {
-        public void onClickButton(String calcView);
-    }
-    // 自身と紐づいたActivityの参照が格納される
-    private MyListener mListener;
 
     private TextView textView, calcView;
     // 計算キー
@@ -36,7 +31,18 @@ public class MainFragment extends Fragment {
     private boolean isOperatorKeyPushed;
     // 計算内容
     private String calcText;
+    // 計算結果
+    private String calcResult;
 
+    // MainFragmentと紐づいたActivityの参照を格納
+    private MyListener mListener;
+    // コールバック用インターフェース定義
+    public interface MyListener {
+        // 履歴ボタンinterface
+        public void onHisButton(String date, String calcView, String result);
+        // 通知ボタンinterface
+        public void onNotifyButton(String date, String calcView, String result);
+    }
     // Fragmentで表示するViewを作成するメソッド
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -126,10 +132,28 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 // 履歴通知
                 if (mListener != null) {
-                    mListener.onClickButton(calcView.getText().toString());
+                    calcText = calcView.getText().toString();
+                    calcResult = textView.getText().toString();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+                    mListener.onHisButton(df.format(new Date()), calcText, calcResult);
                 }
             }
         };
+        // 通知アクション
+        View.OnClickListener notifyActionListener = new View.OnClickListener() {
+            // 計算キー
+            @Override
+            public void onClick(View view) {
+                // 履歴通知
+                if (mListener != null) {
+                    calcText = calcView.getText().toString();
+                    calcResult = textView.getText().toString();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+                    mListener.onNotifyButton(df.format(new Date()), calcText, calcResult);
+                }
+            }
+        };
+
 
         // NumberButton
         view.findViewById(R.id.ent_1).setOnClickListener(buttonNumberListener);
@@ -151,7 +175,7 @@ public class MainFragment extends Fragment {
         view.findViewById(R.id.ent_ac).setOnClickListener(buttonClearListener);
         view.findViewById(R.id.ent_equal).setOnClickListener(buttonActionListener);
         view.findViewById(R.id.ent_his).setOnClickListener(historyActionListener);
-        view.findViewById(R.id.ent_plus_minus).setOnClickListener(buttonActionListener);
+        view.findViewById(R.id.ent_notify).setOnClickListener(notifyActionListener);
     }
 
     // FragmentがActivityに追加されたら呼ばれるメソッド
